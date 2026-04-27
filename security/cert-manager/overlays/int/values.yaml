@@ -29,3 +29,6 @@ cainjector:
     limits:
       cpu: 200m
       memory: 256Mi
+
+startupapicheck:
+  enabled: false
