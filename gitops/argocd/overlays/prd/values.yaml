@@ -1,0 +1,64 @@
+global:
+  image:
+    tag: v2.10.0
+
+redis-ha:
+  enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+redis:
+  enabled: false
+
+controller:
+  replicas: 3
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+server:
+  replicas: 3
+  extraArgs:
+    - --insecure
+  ingress:
+    enabled: true
+    hostname: argocd.prd.example.com
+
+repoServer:
+  replicas: 3
+
+applicationSet:
+  replicas: 3
+
+configs:
+  cm:
+    accounts.developer: apiKey, login
+    accounts.deployer: apiKey, login
+    accounts.readonly: login
+    kustomize.buildOptions: --enable-helm
+
+  rbac:
+    policy.csv: |
+      p, role:developer, applications, get, */*, allow
+      p, role:developer, logs, get, */*, allow
+      
+      p, role:deployer, applications, *, */*, allow
+      p, role:deployer, projects, get, *, allow
+      
+      p, role:readonly, applications, get, */*, allow
+      p, role:readonly, projects, get, *, allow
+      
+      g, developer, role:developer
+      g, deployer, role:deployer
+      g, readonly, role:readonly
+
+    policy.default: role:readonly

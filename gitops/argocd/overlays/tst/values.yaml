@@ -1,0 +1,64 @@
+global:
+  image:
+    tag: v2.10.0
+
+redis-ha:
+  enabled: false
+
+redis:
+  enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+controller:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+server:
+  replicas: 1
+  extraArgs:
+    - --insecure
+  ingress:
+    enabled: false
+
+repoServer:
+  replicas: 1
+
+applicationSet:
+  replicas: 1
+
+configs:
+  cm:
+    accounts.developer: apiKey, login
+    accounts.deployer: apiKey, login
+    accounts.readonly: login
+    kustomize.buildOptions: --enable-helm
+
+  rbac:
+    policy.csv: |
+      p, role:developer, applications, get, */*, allow
+      p, role:developer, applications, sync, */*, allow
+      p, role:developer, logs, get, */*, allow
+      
+      p, role:deployer, applications, *, */*, allow
+      p, role:deployer, projects, get, *, allow
+      
+      p, role:readonly, applications, get, */*, allow
+      p, role:readonly, projects, get, *, allow
+      
+      g, developer, role:developer
+      g, deployer, role:deployer
+      g, readonly, role:readonly
+
+    policy.default: role:readonly
