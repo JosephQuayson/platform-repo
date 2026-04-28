@@ -38,10 +38,16 @@ reportsController:
       cpu: 100m
       memory: 128Mi
 
-# Disable cleanup jobs completely
-crds:
-  migration:
+# Disable cleanup jobs
+cleanupJobs:
+  admissionReports:
+    enabled: false
+  clusterAdmissionReports:
     enabled: false
 
-cleanupJobs:
+# Disable pre/post upgrade hooks
+preUpgradeHook:
+  enabled: false
+
+postUpgradeHook:
   enabled: false
