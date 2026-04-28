@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: platform-tools
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    # Pattern: category/component/overlays/env (e.g., security/cert-manager/overlays/int)
+    - git:
+        repoURL: https://github.com/JosephQuayson/platform-repo.git
+        revision: main
+        directories:
+          - path: "*/*/overlays/int"
+          - path: "gitops/*/overlays/int"
+            exclude: true
+  template:
+    metadata:
+      name: "{{ index .path.segments 1 }}-{{ index .path.segments 3 }}"
+      labels:
+        category: "{{ index .path.segments 0 }}"
+        component: "{{ index .path.segments 1 }}"
+        environment: "{{ index .path.segments 3 }}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/JosephQuayson/platform-repo.git
+        targetRevision: main
+        path: "{{ .path.path }}"
+      destination:
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: platform-namespaces
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    # Pattern: namespaces/overlays/env
+    - git:
+        repoURL: https://github.com/JosephQuayson/platform-repo.git
+        revision: main
+        directories:
+          - path: "namespaces/overlays/int"
+  template:
+    metadata:
+      name: "namespaces-{{ index .path.segments 2 }}"
+      labels:
+        component: "namespaces"
+        environment: "{{ index .path.segments 2 }}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/JosephQuayson/platform-repo.git
+        targetRevision: main
+        path: "{{ .path.path }}"
+      destination:
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
