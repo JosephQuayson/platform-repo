@@ -38,7 +38,7 @@ reportsController:
       cpu: 100m
       memory: 128Mi
 
-# Disable hooks
+# Disable ALL hooks
 preUpgradeHook:
   enabled: false
 
