@@ -37,3 +37,16 @@ reportsController:
     requests:
       cpu: 100m
       memory: 128Mi
+
+# Fix: Use valid kubectl image
+cleanupJobs:
+  admissionReports:
+    image:
+      registry: docker.io
+      repository: bitnami/kubectl
+      tag: "1.29"
+  clusterAdmissionReports:
+    image:
+      registry: docker.io
+      repository: bitnami/kubectl
+      tag: "1.29"
