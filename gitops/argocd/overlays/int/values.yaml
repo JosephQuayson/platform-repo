@@ -40,10 +40,10 @@ applicationSet:
 
 configs:
   cm:
+    kustomize.buildOptions: --enable-helm
     accounts.developer: apiKey, login
     accounts.deployer: apiKey, login
     accounts.readonly: login
-    kustomize.buildOptions: --enable-helm
 
   rbac:
     policy.csv: |
