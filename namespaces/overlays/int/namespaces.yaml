@@ -25,3 +25,18 @@ metadata:
   name: ingress-nginx
   labels:
     environment: int
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: istio-system
+  labels:
+    environment: int
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: istio-ingress
+  labels:
+    environment: int
+    istio-injection: enabled

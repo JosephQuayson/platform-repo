@@ -1,0 +1,17 @@
+global:
+  istioNamespace: istio-system
+
+meshConfig:
+  accessLogFile: /dev/stdout
+  enableTracing: true
+
+pilot:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  replicaCount: 1
+  autoscaleEnabled: false
